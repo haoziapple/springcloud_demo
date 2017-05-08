@@ -7,6 +7,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.haozi.springcloud.consumer.hystrix.ComputeClientHystrix;
 
+/**
+ * @className:com.haozi.springcloud.consumer.intf.ComputeClient
+ * @description:使用Feign客户端，以及Hystrix断路器
+ * @version:v1.0.0
+ * @date:2017年5月8日 上午10:14:49
+ * @author:WangHao
+ */
 @FeignClient(value = "compute-service", fallback = ComputeClientHystrix.class)
 public interface ComputeClient
 {

@@ -13,6 +13,7 @@ import org.springframework.web.client.RestTemplate;
 @EnableFeignClients
 public class RibbonApplication
 {
+	// 使用ribbon负载均衡
 	@Bean
 	@LoadBalanced
 	RestTemplate restTemplate()
