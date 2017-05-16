@@ -1,5 +1,7 @@
 package com.haozi.springcloud.consumer.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -18,6 +20,8 @@ import com.haozi.springcloud.consumer.intf.ComputeClient;
 @RestController
 public class ConsumerController
 {
+	private static Logger logger = LoggerFactory.getLogger(ConsumerController.class);
+	
 	// 使用ribbon
 	@Autowired
 	RestTemplate restTemplate;
@@ -37,6 +41,7 @@ public class ConsumerController
 	@RequestMapping(value = "/addUseFeign", method = RequestMethod.GET)
 	public Integer addUseFeign()
 	{
+		logger.info("addUseFeign");
 		return computeClient.add(20, 30);
 	}
 }
