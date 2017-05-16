@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import com.haozi.springcloud.consumer.intf.ComputeClient;
+import com.netflix.ribbon.proxy.annotation.Hystrix;
 
 /**
  * @className:com.haozi.springcloud.consumer.controller.ConsumerController
