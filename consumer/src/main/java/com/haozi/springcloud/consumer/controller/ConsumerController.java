@@ -3,13 +3,17 @@ package com.haozi.springcloud.consumer.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import com.haozi.springcloud.consumer.intf.Compute2Client;
 import com.haozi.springcloud.consumer.intf.ComputeClient;
-import com.netflix.ribbon.proxy.annotation.Hystrix;
+import com.haozi.springcloud.consumer.intf.ReqBeanClient;
+import com.haozi.springcloud.consumer.intf.RspBeanClient;
 
 /**
  * @className:com.haozi.springcloud.consumer.controller.ConsumerController
@@ -22,7 +26,7 @@ import com.netflix.ribbon.proxy.annotation.Hystrix;
 public class ConsumerController
 {
 	private static Logger logger = LoggerFactory.getLogger(ConsumerController.class);
-	
+
 	// 使用ribbon
 	@Autowired
 	RestTemplate restTemplate;
@@ -30,6 +34,8 @@ public class ConsumerController
 	// 使用feign
 	@Autowired
 	ComputeClient computeClient;
+	@Autowired
+	Compute2Client compute2Client;
 
 	// 使用ribbon
 	@RequestMapping(value = "/add", method = RequestMethod.GET)
@@ -44,5 +50,19 @@ public class ConsumerController
 	{
 		logger.info("addUseFeign");
 		return computeClient.add(20, 30);
+	}
+
+	@RequestMapping(value = "/add2", method = RequestMethod.GET)
+	public Integer add2(@RequestParam Integer a, @RequestParam Integer b)
+	{
+		logger.info("add2");
+		return compute2Client.add(a, b);
+	}
+
+	@RequestMapping(value = "/postReq", method = RequestMethod.POST)
+	public RspBeanClient postReq(@RequestBody ReqBeanClient reqBean)
+	{
+		logger.info("postReq {}", reqBean);
+		return compute2Client.postReq(reqBean);
 	}
 }
