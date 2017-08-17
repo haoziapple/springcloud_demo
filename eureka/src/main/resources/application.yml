@@ -13,7 +13,7 @@ eureka:
     enable-self-preservation: true
 server:
   port: 1111
-  address: 10.108.26.61
+  address: 10.108.26.220
 info:
   description: consumer service for demo-use
 
