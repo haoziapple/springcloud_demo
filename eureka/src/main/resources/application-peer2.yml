@@ -1,0 +1,18 @@
+server:
+  port: 1112
+  address: 10.108.26.61
+spring:
+  application:
+    name: eureka-server
+eureka:
+  server:
+    enable-self-preservation: true
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://10.108.26.61:1111/eureka/,http://10.108.26.61:1113/eureka/
+  instance:
+    hostname: ${server.address}
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
