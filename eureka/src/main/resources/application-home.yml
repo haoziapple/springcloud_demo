@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: eureka-server
+eureka:
+  instance:
+    hostname: peer1
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone: http://${server.address}:${server.port}/eureka/
+  server:
+    enable-self-preservation: true
+server:
+  port: 1111
+  address: 192.168.3.49
+info:
+  description: consumer service for demo-use
+
+
