@@ -10,7 +10,7 @@ eureka:
     service-url:
       defaultZone: http://${server.address}:${server.port}/eureka/
   server:
-    enable-self-preservation: true
+    enable-self-preservation: false
 server:
   port: 1111
   address: 192.168.3.49

@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: zipkin-server
+server:
+  port: 9411
+info:
+  description: zipkin service
+management:
+  security:
+    enabled: false
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
+  client:
+    service-url:
+      defaultZone: http://10.108.26.220:1111/eureka/

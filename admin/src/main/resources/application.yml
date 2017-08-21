@@ -1,0 +1,17 @@
+server:
+  port: 9091
+spring:
+  application:
+    name: spring-cloud-admin
+management:
+  security:
+    enabled: false
+eureka:
+  client:
+    service-url:
+      defaultZone: http://10.108.26.220:1111/eureka/
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
+info:
+  description: spring-cloud-admin server
