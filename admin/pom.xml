@@ -62,7 +62,7 @@
         </dependencies>
     </dependencyManagement>
     <build>
-        <finalName>spring_cloud_admin</finalName>
+        <finalName>spring-cloud-admin</finalName>
         <plugins>
             <!-- 使用java1.7和UTF-8编码 -->
             <!-- we want sources to be processed by a specific 1.8 javac -->

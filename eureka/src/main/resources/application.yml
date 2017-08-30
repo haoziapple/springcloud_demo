@@ -3,14 +3,14 @@ spring:
     name: eureka-server
 eureka:
   instance:
-    hostname: peer1
+    hostname: eureka-peer1
   client:
     register-with-eureka: false
     fetch-registry: false
     service-url:
       defaultZone: http://${server.address}:${server.port}/eureka/
   server:
-    enable-self-preservation: true
+    enable-self-preservation: false
 server:
   port: 1111
   address: 10.108.26.220
