@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: hostess-api-gateway
+server:
+  port: 5555
+info:
+  description: api-gateway service
+zuul:
+  routes:
+    api-a:
+      path: /a/**
+      url: http://10.108.26.61:8088/oa-struct-service
+    api-b:
+      path: /b/**
+      url: http://www.baidu.com
+  add-proxy-headers: true
