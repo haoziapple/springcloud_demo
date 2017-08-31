@@ -18,6 +18,9 @@ zuul:
       path: /ec/**
       serviceId: echome
   add-proxy-headers: true
+# 正确的处理HTTP请求头信息中的Host--参考PreDecorationFilter
+# 防止页面跳转
+  add-host-header: false
 echome:
   ribbon:
     listOfServers: http://www.jd.com,http://www.taobao.com,http://www.tmall.com

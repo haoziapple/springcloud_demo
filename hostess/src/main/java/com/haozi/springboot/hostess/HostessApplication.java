@@ -2,11 +2,15 @@ package com.haozi.springboot.hostess;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.web.BasicErrorController;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.client.SpringCloudApplication;
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 import org.springframework.cloud.netflix.zuul.filters.ZuulProperties;
 import org.springframework.context.ApplicationContext;
+import org.springframework.web.servlet.DispatcherServlet;
+import org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping;
+import org.springframework.web.servlet.view.BeanNameViewResolver;
 
 import java.util.Arrays;
 
@@ -38,11 +42,18 @@ public class HostessApplication {
         String[] beanNames = ctx.getBeanDefinitionNames();
         Arrays.sort(beanNames);
         for (String beanName : beanNames) {
-            if (beanName.contains("zuul") || beanName.contains("Zuul")) {
-                logger.info("loaded bean's name: {}, class: {}", beanName, ctx.getBean(beanName).getClass().getName());
-            }
+//            if (beanName.contains("zuul") || beanName.contains("Zuul")) {
+            logger.info("loaded bean's name: {}, class: {}", beanName, ctx.getBean(beanName).getClass().getName());
+//            }
         }
         ZuulProperties prop = ctx.getBean(ZuulProperties.class);
         logger.info(prop.getRoutes().toString());
+    }
+
+    private static void testSpringBean() {
+        BasicErrorController basicErrorController;
+        BeanNameUrlHandlerMapping beanNameUrlHandlerMapping;
+        BeanNameViewResolver beanNameViewResolver;
+        DispatcherServlet dispatcherServlet;
     }
 }
