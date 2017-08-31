@@ -9,8 +9,15 @@ zuul:
   routes:
     api-a:
       path: /a/**
+      serviceId: api-a
       url: http://10.108.26.61:8088/oa-struct-service
     api-b:
       path: /b/**
       url: http://www.baidu.com
+    echome:
+      path: /ec/**
+      serviceId: echome
   add-proxy-headers: true
+echome:
+  ribbon:
+    listOfServers: http://www.jd.com,http://www.taobao.com,http://www.tmall.com
