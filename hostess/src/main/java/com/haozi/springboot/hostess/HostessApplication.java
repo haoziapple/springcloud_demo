@@ -1,6 +1,5 @@
 package com.haozi.springboot.hostess;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.jmx.mbeanserver.JmxMBeanServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,7 +7,10 @@ import org.springframework.boot.actuate.health.OrderedHealthAggregator;
 import org.springframework.boot.autoconfigure.web.BasicErrorController;
 import org.springframework.boot.autoconfigure.web.HttpMessageConverters;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.jackson.JsonComponentModule;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cloud.client.SpringCloudApplication;
+import org.springframework.cloud.client.loadbalancer.LoadBalancerInterceptor;
 import org.springframework.cloud.commons.util.InetUtils;
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 import org.springframework.cloud.netflix.zuul.filters.ZuulProperties;
@@ -16,9 +18,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping;
+import org.springframework.web.servlet.resource.ResourceUrlProvider;
 import org.springframework.web.servlet.view.BeanNameViewResolver;
+import org.springframework.web.util.UrlPathHelper;
 
 import java.util.Arrays;
+
 
 /**
  * @className: com.haozi.springboot.hostess.HostessApplication
@@ -66,5 +71,9 @@ public class HostessApplication {
         Jackson2ObjectMapperBuilder jacksonObjectMapperBuilder;
         JmxMBeanServer mBeanServer;
         HttpMessageConverters messageConverters;
+        JsonComponentModule jsonComponentModule;
+        ResourceUrlProvider mvcResourceUrlProvider;
+        UrlPathHelper mvcUrlPathHelper;
+        RestTemplateBuilder restTemplateBuilder;
     }
 }
