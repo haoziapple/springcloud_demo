@@ -1,13 +1,19 @@
 package com.haozi.springboot.hostess;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.jmx.mbeanserver.JmxMBeanServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.actuate.health.OrderedHealthAggregator;
 import org.springframework.boot.autoconfigure.web.BasicErrorController;
+import org.springframework.boot.autoconfigure.web.HttpMessageConverters;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.client.SpringCloudApplication;
+import org.springframework.cloud.commons.util.InetUtils;
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 import org.springframework.cloud.netflix.zuul.filters.ZuulProperties;
 import org.springframework.context.ApplicationContext;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping;
 import org.springframework.web.servlet.view.BeanNameViewResolver;
@@ -55,5 +61,10 @@ public class HostessApplication {
         BeanNameUrlHandlerMapping beanNameUrlHandlerMapping;
         BeanNameViewResolver beanNameViewResolver;
         DispatcherServlet dispatcherServlet;
+        OrderedHealthAggregator orderedHealthAggregator;
+        InetUtils inetUtils;
+        Jackson2ObjectMapperBuilder jacksonObjectMapperBuilder;
+        JmxMBeanServer mBeanServer;
+        HttpMessageConverters messageConverters;
     }
 }
