@@ -9,7 +9,7 @@ import java.util.Map;
  * @date: 2017/9/5 16:37
 **/
 public class RouteRsp {
-    private String servcieId;
+    private String serviceId;
 
     private String url;
 
@@ -19,12 +19,12 @@ public class RouteRsp {
 
     private String body;
 
-    public String getServcieId() {
-        return servcieId;
+    public String getServiceId() {
+        return serviceId;
     }
 
-    public void setServcieId(String servcieId) {
-        this.servcieId = servcieId;
+    public void setServiceId(String serviceId) {
+        this.serviceId = serviceId;
     }
 
     public String getUrl() {
@@ -62,7 +62,7 @@ public class RouteRsp {
     @Override
     public String toString() {
         return "RouteRsp{" +
-                "servcieId='" + servcieId + '\'' +
+                "serviceId='" + serviceId + '\'' +
                 ", url='" + url + '\'' +
                 ", httpCode=" + httpCode +
                 ", headerMap=" + headerMap +

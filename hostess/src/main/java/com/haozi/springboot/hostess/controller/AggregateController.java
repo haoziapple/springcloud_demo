@@ -106,7 +106,7 @@ public class AggregateController {
         List<RouteRsp> rspList = new ArrayList<>();
         for (RouteBean routeBean : routeReq) {
             RouteRsp rsp = new RouteRsp();
-            rsp.setServcieId(routeBean.getServiceId());
+            rsp.setServiceId(routeBean.getServiceId());
             rsp.setUrl(routeBean.getUrl());
             rspList.add(rsp);
         }
