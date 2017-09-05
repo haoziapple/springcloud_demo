@@ -8,15 +8,16 @@ import java.io.Serializable;
  * @description: 一般请求bean
  * @author: wanghao/haozixiaowang@163.com
  * @date: 2017/9/1 11:01
-**/
+ **/
 @XmlRootElement
-public class RequestBean <T> implements Serializable{
+public class RequestBean<T> implements Serializable {
+    // 具体数据信息
     private T data;
-
+    // 请求Id
     private String requestId;
-
+    // 时间戳-客户端
     private Long timestamp;
-
+    // ip地址
     private String ip;
 
     public T getData() {

@@ -3,6 +3,7 @@ spring:
     name: hostess-api-gateway
 server:
   port: 5555
+  address: 10.108.26.61
 info:
   description: api-gateway service
 zuul:
@@ -13,6 +14,7 @@ zuul:
       url: http://10.108.26.61:8088/oa-struct-service
     api-b:
       path: /b/**
+      serviceId: api-b
       url: http://www.baidu.com
     echome:
       path: /ec/**
