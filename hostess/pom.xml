@@ -54,6 +54,11 @@
             <!--<version>1.3.2</version>-->
         <!--</dependency>-->
         <!-- end::spring-boot-admin -->
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+        </dependency>
     </dependencies>
     <dependencyManagement>
         <dependencies>

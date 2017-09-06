@@ -9,14 +9,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.netflix.zuul.filters.ZuulProperties;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMessage;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.AsyncRestTemplate;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
@@ -54,8 +60,7 @@ public class AggregateController {
         RequestBean<String> bean = new RequestBean<>();
         bean.setIp("ip");
         bean.setData("test");
-        bean.setRequestId("requestId");
-        bean.setTimestamp(System.currentTimeMillis());
+        bean.setRequestId("requestId");        bean.setTimestamp(System.currentTimeMillis());
         try {
             Thread.sleep(1000L);
         } catch (InterruptedException e) {
@@ -105,6 +110,9 @@ public class AggregateController {
         // 设置返回list
         List<RouteRsp> rspList = new ArrayList<>();
         for (RouteBean routeBean : routeReq) {
+            // url需要以分隔符起始
+            if (!routeBean.getUrl().startsWith("/"))
+                routeBean.setUrl("/" + routeBean.getUrl());
             RouteRsp rsp = new RouteRsp();
             rsp.setServiceId(routeBean.getServiceId());
             rsp.setUrl(routeBean.getUrl());
@@ -122,14 +130,14 @@ public class AggregateController {
     // 异步发送批量请求
     private List<ListenableFuture<ResponseEntity<String>>> sendAsyncReq(List<RouteBean> routeReq) {
         List<ListenableFuture<ResponseEntity<String>>> futureList = new ArrayList<>();
-
         // 循环发起请求, 仍然请求本地的gateway，这样分发的请求可共用zuul的过滤器
-        // TODO 传递分发请求的头信息，否则使用默认头将造成头信息丢失
         for (RouteBean routeBean : routeReq) {
-            Map<String, ZuulProperties.ZuulRoute> routeMap = zuulProp.getRoutes();
-            String subPath = routeMap.get(routeBean.getServiceId()).getPath().replace("**", routeBean.getUrl());
+            MultiValueMap<String, String> headerMap = new LinkedMultiValueMap<>();
+            headerMap.setAll(routeBean.getHeaderMap());
+            // 设置请求头与请求体
+            HttpEntity<String> reqEntity = new HttpEntity<>(routeBean.getBody(), headerMap);
             ListenableFuture<ResponseEntity<String>> future = asyncRestTemplate.
-                    postForEntity(this.getRootHost() + subPath, null, String.class);
+                    postForEntity(this.getRootHost() + routeBean.getUrl(), reqEntity, String.class);
             futureList.add(future);
         }
         return futureList;
@@ -138,14 +146,20 @@ public class AggregateController {
     // 获取异步批量请求的返回结果
     private void getAsyncRsp(List<ListenableFuture<ResponseEntity<String>>> futureList, List<RouteRsp> rspList) {
         for (int i = 0; i < rspList.size(); i++) {
+            RouteRsp routeRsp = rspList.get(i);
             try {
                 ResponseEntity<String> rspEntity = futureList.get(i).get();
-                RouteRsp routeRsp = rspList.get(i);
                 routeRsp.setHttpCode(rspEntity.getStatusCode().value());
                 routeRsp.setBody(rspEntity.getBody());
                 routeRsp.setHeaderMap(rspEntity.getHeaders().toSingleValueMap());
             } catch (Exception e) {
                 logger.error("fail to get async http rsp", e);
+                if (e.getCause() instanceof HttpClientErrorException)
+                    routeRsp.setHttpCode(((HttpClientErrorException) e.getCause()).getStatusCode().value());
+                else {
+                    routeRsp.setHttpCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+                    routeRsp.setBody(e.getMessage());
+                }
             }
         }
     }
@@ -161,6 +175,8 @@ public class AggregateController {
         System.out.println(path);
 
         String t = path.replace("**", "test");
-        System.out.println(t);
+        System.out.println("replace result is: " + t);
+        String testAll = path.replaceAll("\\*\\*", "test");
+        System.out.println("replaceAll result is: " + testAll);
     }
 }
