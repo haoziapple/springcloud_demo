@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @className: com.haozi.springboot.hostess.filter.AccessFilter
@@ -69,7 +70,7 @@ public class AccessFilter extends ZuulFilter{
             logger.warn("access token is empty");
             // 令zuul过滤该请求，不对其进行路由
             ctx.setSendZuulResponse(false);
-            ctx.setResponseStatusCode(401);
+            ctx.setResponseStatusCode(HttpServletResponse.SC_UNAUTHORIZED);
             return null;
         }
         logger.info("access token ok");

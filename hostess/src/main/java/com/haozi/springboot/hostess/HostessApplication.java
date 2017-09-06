@@ -1,5 +1,8 @@
 package com.haozi.springboot.hostess;
 
+import com.haozi.springboot.hostess.filter.AccessFilter;
+import com.haozi.springboot.hostess.filter.ErrorFilter;
+import com.haozi.springboot.hostess.filter.LogFilter;
 import com.sun.jmx.mbeanserver.JmxMBeanServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +18,7 @@ import org.springframework.cloud.commons.util.InetUtils;
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 import org.springframework.cloud.netflix.zuul.filters.ZuulProperties;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping;
@@ -61,19 +65,19 @@ public class HostessApplication {
         logger.info(prop.getRoutes().toString());
     }
 
-    private static void testSpringBean() {
-        BasicErrorController basicErrorController;
-        BeanNameUrlHandlerMapping beanNameUrlHandlerMapping;
-        BeanNameViewResolver beanNameViewResolver;
-        DispatcherServlet dispatcherServlet;
-        OrderedHealthAggregator orderedHealthAggregator;
-        InetUtils inetUtils;
-        Jackson2ObjectMapperBuilder jacksonObjectMapperBuilder;
-        JmxMBeanServer mBeanServer;
-        HttpMessageConverters messageConverters;
-        JsonComponentModule jsonComponentModule;
-        ResourceUrlProvider mvcResourceUrlProvider;
-        UrlPathHelper mvcUrlPathHelper;
-        RestTemplateBuilder restTemplateBuilder;
+    @Bean
+    public AccessFilter accessFilter() {
+        return new AccessFilter();
     }
+
+    @Bean
+    public ErrorFilter errorFilter(){
+        return  new ErrorFilter();
+    }
+
+    @Bean
+    public LogFilter logFilter(){
+        return new LogFilter();
+    }
+
 }

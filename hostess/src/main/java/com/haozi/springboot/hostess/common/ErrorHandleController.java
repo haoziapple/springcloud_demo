@@ -27,6 +27,6 @@ public class ErrorHandleController {
     @ExceptionHandler(value = Exception.class)
     public void defaultErrorHandler(HttpServletResponse rsp, Exception e) {
         logger.error("Uncatched Controller Exception", e);
-        rsp.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        rsp.setStatus(HttpStatus.BAD_GATEWAY.value());
     }
 }
