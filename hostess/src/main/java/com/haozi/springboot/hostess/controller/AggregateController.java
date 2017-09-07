@@ -7,10 +7,9 @@ import com.haozi.springboot.hostess.controller.constants.MappingValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.netflix.zuul.filters.ZuulProperties;
+import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -27,7 +26,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -38,7 +36,7 @@ import java.util.concurrent.ExecutionException;
  **/
 @Controller
 @RequestMapping(MappingValue.Aggregrate.ROOT)
-public class AggregateController {
+public class AggregateController implements EnvironmentAware{
     private static Logger logger = LoggerFactory.getLogger(AggregateController.class);
 
     @Autowired
@@ -47,12 +45,8 @@ public class AggregateController {
     @Autowired
     private AsyncRestTemplate asyncRestTemplate;
 
-    // zuul配置，用以获取路由信息
-    @Autowired
-    private ZuulProperties zuulProp;
-
-    @Autowired
-    private Environment env;
+    // gateway自身的主机地址
+    private String rootHost;
 
     @RequestMapping(value = "/test")
     @ResponseBody
@@ -114,7 +108,7 @@ public class AggregateController {
             if (!routeBean.getUrl().startsWith("/"))
                 routeBean.setUrl("/" + routeBean.getUrl());
             RouteRsp rsp = new RouteRsp();
-            rsp.setServiceId(routeBean.getServiceId());
+            rsp.setRequestId(routeBean.getRequestId());
             rsp.setUrl(routeBean.getUrl());
             rspList.add(rsp);
         }
@@ -127,6 +121,12 @@ public class AggregateController {
         return rspList;
     }
 
+    // 通过environment设置网关服务地址, 作为聚合请求时的根地址
+    @Override
+    public void setEnvironment(Environment environment) {
+        this.rootHost = "http://" + environment.getProperty("server.address") + ":" + environment.getProperty("server.port");
+    }
+
     // 异步发送批量请求
     private List<ListenableFuture<ResponseEntity<String>>> sendAsyncReq(List<RouteBean> routeReq) {
         List<ListenableFuture<ResponseEntity<String>>> futureList = new ArrayList<>();
@@ -137,7 +137,7 @@ public class AggregateController {
             // 设置请求头与请求体
             HttpEntity<String> reqEntity = new HttpEntity<>(routeBean.getBody(), headerMap);
             ListenableFuture<ResponseEntity<String>> future = asyncRestTemplate.
-                    postForEntity(this.getRootHost() + routeBean.getUrl(), reqEntity, String.class);
+                    postForEntity(this.rootHost + routeBean.getUrl(), reqEntity, String.class);
             futureList.add(future);
         }
         return futureList;
@@ -162,12 +162,6 @@ public class AggregateController {
                 }
             }
         }
-    }
-
-    // 获取gateway的请求地址
-    // TODO 待优化，初始化的时候获取地址，提高效率
-    private String getRootHost() {
-        return "http://" + env.getProperty("server.address") + ":" + env.getProperty("server.port");
     }
 
     public static void main(String[] args) {

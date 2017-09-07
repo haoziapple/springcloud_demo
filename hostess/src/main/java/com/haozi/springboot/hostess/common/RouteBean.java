@@ -9,7 +9,7 @@ import java.util.Map;
  * @date: 2017/9/5 16:11
 **/
 public class RouteBean {
-    private String serviceId;
+    private String requestId;
 
     private String url;
 
@@ -17,12 +17,12 @@ public class RouteBean {
 
     private String body;
 
-    public String getServiceId() {
-        return serviceId;
+    public String getRequestId() {
+        return requestId;
     }
 
-    public void setServiceId(String serviceId) {
-        this.serviceId = serviceId;
+    public void setRequestId(String requestId) {
+        this.requestId = requestId;
     }
 
     public String getUrl() {
@@ -52,7 +52,7 @@ public class RouteBean {
     @Override
     public String toString() {
         return "RouteBean{" +
-                "serviceId='" + serviceId + '\'' +
+                "requestId='" + requestId + '\'' +
                 ", url='" + url + '\'' +
                 ", headerMap=" + headerMap +
                 ", body='" + body + '\'' +
