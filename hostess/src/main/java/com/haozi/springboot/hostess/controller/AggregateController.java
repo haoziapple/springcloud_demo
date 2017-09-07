@@ -41,19 +41,25 @@ import java.util.concurrent.ExecutionException;
 @Controller
 @RequestMapping(MappingValue.Aggregrate.ROOT)
 public class AggregateController implements EnvironmentAware {
+    // 在请求头中保存被聚合请求的来源IP
+    public static final String ORIGIN_HOST = "origin-host-from-aggregate";
     private static Logger logger = LoggerFactory.getLogger(AggregateController.class);
-
     @Autowired
     private RestTemplate restTemplate;
-
     @Autowired
     private AsyncRestTemplate asyncRestTemplate;
-
     // gateway自身的主机地址
     private String rootHost;
 
-    // 在请求头中保存被聚合请求的来源IP
-    public static final String ORIGIN_HOST = "origin-host-from-aggregate";
+    public static void test(String[] args) {
+        String path = "/a/**";
+        System.out.println(path);
+
+        String t = path.replace("**", "test");
+        System.out.println("replace result is: " + t);
+        String testAll = path.replaceAll("\\*\\*", "test");
+        System.out.println("replaceAll result is: " + testAll);
+    }
 
     @RequestMapping(value = "/test")
     @ResponseBody
@@ -156,11 +162,15 @@ public class AggregateController implements EnvironmentAware {
             // 设置请求头与请求体
             HttpEntity<String> reqEntity = new HttpEntity<>(routeBean.getBody(), headerMap);
             ListenableFuture<ResponseEntity<String>> future;
-            if (RequestMethod.POST.name().equalsIgnoreCase(routeBean.getReqMethod()))
+            if (RequestMethod.GET.name().equalsIgnoreCase(routeBean.getReqMethod())) {
+                // GET请求
+                future = asyncRestTemplate.getForEntity(this.rootHost + routeBean.getUrl(), String.class);
+
+            } else {
+                // 默认post请求
                 future = asyncRestTemplate.
                         postForEntity(this.rootHost + routeBean.getUrl(), reqEntity, String.class);
-            else
-                future = asyncRestTemplate.getForEntity(this.rootHost + routeBean.getUrl(), String.class);
+            }
             futureList.add(future);
         }
         return futureList;
@@ -185,15 +195,5 @@ public class AggregateController implements EnvironmentAware {
                 }
             }
         }
-    }
-
-    public static void test(String[] args) {
-        String path = "/a/**";
-        System.out.println(path);
-
-        String t = path.replace("**", "test");
-        System.out.println("replace result is: " + t);
-        String testAll = path.replaceAll("\\*\\*", "test");
-        System.out.println("replaceAll result is: " + testAll);
     }
 }
