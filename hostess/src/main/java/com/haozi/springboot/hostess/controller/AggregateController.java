@@ -164,7 +164,7 @@ public class AggregateController implements EnvironmentAware{
         }
     }
 
-    public static void main(String[] args) {
+    public static void test(String[] args) {
         String path = "/a/**";
         System.out.println(path);
 

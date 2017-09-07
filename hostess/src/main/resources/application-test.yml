@@ -1,0 +1,13 @@
+server:
+  port: 6667
+  address: 10.108.26.220
+zuul:
+  routes:
+    oa-tree:
+      path: /oa-tree/**
+      serviceId: oa-tree
+      url: http://10.108.26.232:8086/oa-struct-service
+    file:
+      path: /file/**
+      serviceId: file
+      url: http://10.108.26.241:8081/file
