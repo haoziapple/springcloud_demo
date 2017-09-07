@@ -11,6 +11,8 @@ import java.util.Map;
 public class RouteBean {
     private String requestId;
 
+    private String reqMethod;
+
     private String url;
 
     private Map<String, String> headerMap;
@@ -49,10 +51,19 @@ public class RouteBean {
         this.body = body;
     }
 
+    public String getReqMethod() {
+        return reqMethod;
+    }
+
+    public void setReqMethod(String reqMethod) {
+        this.reqMethod = reqMethod;
+    }
+
     @Override
     public String toString() {
         return "RouteBean{" +
                 "requestId='" + requestId + '\'' +
+                ", reqMethod='" + reqMethod + '\'' +
                 ", url='" + url + '\'' +
                 ", headerMap=" + headerMap +
                 ", body='" + body + '\'' +

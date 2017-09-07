@@ -4,6 +4,7 @@ import com.haozi.springboot.hostess.bean.RequestBean;
 import com.haozi.springboot.hostess.common.RouteBean;
 import com.haozi.springboot.hostess.common.RouteRsp;
 import com.haozi.springboot.hostess.controller.constants.MappingValue;
+import com.haozi.springboot.hostess.util.IPUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +24,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.AsyncRestTemplate;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -36,7 +40,7 @@ import java.util.concurrent.ExecutionException;
  **/
 @Controller
 @RequestMapping(MappingValue.Aggregrate.ROOT)
-public class AggregateController implements EnvironmentAware{
+public class AggregateController implements EnvironmentAware {
     private static Logger logger = LoggerFactory.getLogger(AggregateController.class);
 
     @Autowired
@@ -48,13 +52,17 @@ public class AggregateController implements EnvironmentAware{
     // gateway自身的主机地址
     private String rootHost;
 
+    // 在请求头中保存被聚合请求的来源IP
+    public static final String ORIGIN_HOST = "origin-host-from-aggregate";
+
     @RequestMapping(value = "/test")
     @ResponseBody
     public RequestBean<String> test() {
         RequestBean<String> bean = new RequestBean<>();
         bean.setIp("ip");
         bean.setData("test");
-        bean.setRequestId("requestId");        bean.setTimestamp(System.currentTimeMillis());
+        bean.setRequestId("requestId");
+        bean.setTimestamp(System.currentTimeMillis());
         try {
             Thread.sleep(1000L);
         } catch (InterruptedException e) {
@@ -99,7 +107,11 @@ public class AggregateController implements EnvironmentAware{
     @RequestMapping(value = MappingValue.Aggregrate.BATCH_REQ, method = RequestMethod.POST)
     @ResponseBody
     public List<RouteRsp> batchReq(@RequestBody List<RouteBean> routeReq) {
-        logger.info("get req, {}", routeReq.toString());
+        // 获取原始请求IP
+        String orginIp = IPUtil.getIpAddr(((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest());
+
+        if (logger.isInfoEnabled())
+            logger.info("receive aggregate request from {},request data is {}", orginIp, routeReq.toString());
 
         // 设置返回list
         List<RouteRsp> rspList = new ArrayList<>();
@@ -107,6 +119,13 @@ public class AggregateController implements EnvironmentAware{
             // url需要以分隔符起始
             if (!routeBean.getUrl().startsWith("/"))
                 routeBean.setUrl("/" + routeBean.getUrl());
+
+            // 在请求头中保存被聚合请求的来源IP
+            if (routeBean.getHeaderMap() == null)
+                routeBean.setHeaderMap(new HashMap<String, String>());
+            routeBean.getHeaderMap().put(ORIGIN_HOST, orginIp);
+
+            // 初始化返回bean
             RouteRsp rsp = new RouteRsp();
             rsp.setRequestId(routeBean.getRequestId());
             rsp.setUrl(routeBean.getUrl());
@@ -136,8 +155,12 @@ public class AggregateController implements EnvironmentAware{
             headerMap.setAll(routeBean.getHeaderMap());
             // 设置请求头与请求体
             HttpEntity<String> reqEntity = new HttpEntity<>(routeBean.getBody(), headerMap);
-            ListenableFuture<ResponseEntity<String>> future = asyncRestTemplate.
-                    postForEntity(this.rootHost + routeBean.getUrl(), reqEntity, String.class);
+            ListenableFuture<ResponseEntity<String>> future;
+            if (RequestMethod.POST.name().equalsIgnoreCase(routeBean.getReqMethod()))
+                future = asyncRestTemplate.
+                        postForEntity(this.rootHost + routeBean.getUrl(), reqEntity, String.class);
+            else
+                future = asyncRestTemplate.getForEntity(this.rootHost + routeBean.getUrl(), String.class);
             futureList.add(future);
         }
         return futureList;
