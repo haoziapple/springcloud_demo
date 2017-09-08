@@ -4,6 +4,7 @@ import com.haozi.springboot.hostess.bean.RequestBean;
 import com.haozi.springboot.hostess.bean.RspBean;
 import com.haozi.springboot.hostess.common.RouteBean;
 import com.haozi.springboot.hostess.common.RouteRsp;
+import com.haozi.springboot.hostess.common.checker.ControllerChecker;
 import com.haozi.springboot.hostess.controller.constants.MappingValue;
 import com.haozi.springboot.hostess.util.IPUtil;
 import org.slf4j.Logger;
@@ -94,15 +95,10 @@ public class AggregateController implements EnvironmentAware {
         if (logger.isInfoEnabled())
             logger.info("receive aggregate request from {}, request id: {}, request data: {}", orginIp, request.getRequestId(), request.getData().toString());
 
-        if (bindingResult.hasErrors()) {
-            logger.error("parameter error: {}", bindingResult.getFieldError().getDefaultMessage());
-            // 设置返回bean
-            RspBean<List<RouteRsp>> rspBean = new RspBean<>();
-            rspBean.setRequestId(request.getRequestId());
-            rspBean.setRspCode(HttpStatus.INTERNAL_SERVER_ERROR.toString());
-            rspBean.setRspMsg(bindingResult.getFieldError().getDefaultMessage());
+        // 取得返回bean
+        RspBean rspBean = ControllerChecker.check(request, bindingResult);
+        if (rspBean.getRspCode() != null)
             return rspBean;
-        }
 
         // 设置返回list
         List<RouteRsp> rspList = new ArrayList<>();
@@ -128,8 +124,6 @@ public class AggregateController implements EnvironmentAware {
         // 获取返回
         this.getAsyncRsp(futureList, rspList);
 
-        // 设置返回bean
-        RspBean<List<RouteRsp>> rspBean = new RspBean<>();
         rspBean.setRequestId(request.getRequestId());
         rspBean.setRspCode(HttpStatus.OK.toString());
         rspBean.setRspMsg(HttpStatus.OK.getReasonPhrase());

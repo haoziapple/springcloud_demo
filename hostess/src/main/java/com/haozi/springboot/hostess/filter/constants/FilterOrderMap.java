@@ -39,4 +39,6 @@ public class FilterOrderMap {
         return map.get(filterClassName);
     }
 
+    private FilterOrderMap() {
+    }
 }
