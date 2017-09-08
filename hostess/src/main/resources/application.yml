@@ -2,7 +2,7 @@ spring:
   application:
     name: hostess-api-gateway
   profiles:
-    active: test
+    active: dev
 server:
   port: 5555
   address: 10.108.26.61

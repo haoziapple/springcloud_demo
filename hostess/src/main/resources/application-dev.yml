@@ -1,3 +1,9 @@
 server:
   port: 6666
   address: 10.108.26.61
+zuul:
+  routes:
+    api-a:
+      path: /a/**
+      serviceId: api-a
+      url: http://10.108.26.232:8086/oa-struct-service

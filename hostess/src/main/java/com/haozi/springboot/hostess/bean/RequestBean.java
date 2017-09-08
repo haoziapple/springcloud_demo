@@ -1,7 +1,10 @@
 package com.haozi.springboot.hostess.bean;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import org.hibernate.validator.constraints.NotBlank;
+
+import javax.validation.Valid;
 import java.io.Serializable;
+
 
 /**
  * @className: com.haozi.springboot.hostess.bean.RequestBean
@@ -9,11 +12,12 @@ import java.io.Serializable;
  * @author: wanghao/haozixiaowang@163.com
  * @date: 2017/9/1 11:01
  **/
-@XmlRootElement
 public class RequestBean<T> implements Serializable {
     // 具体数据信息
+    @Valid
     private T data;
     // 请求Id
+    @NotBlank(message = "requestId cannot be blank")
     private String requestId;
     // 时间戳-客户端
     private Long timestamp;
