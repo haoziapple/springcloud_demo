@@ -4,6 +4,7 @@ import com.haozi.springboot.hostess.bean.RequestBean;
 import com.haozi.springboot.hostess.bean.RspBean;
 import com.haozi.springboot.hostess.common.RouteBean;
 import com.haozi.springboot.hostess.common.RouteRsp;
+import com.haozi.springboot.hostess.common.checker.AggregateChecker;
 import com.haozi.springboot.hostess.common.checker.ControllerChecker;
 import com.haozi.springboot.hostess.controller.constants.MappingValue;
 import com.haozi.springboot.hostess.util.IPUtil;
@@ -96,7 +97,7 @@ public class AggregateController implements EnvironmentAware {
             logger.info("receive aggregate request from {}, request id: {}, request data: {}", orginIp, request.getRequestId(), request.getData().toString());
 
         // 取得返回bean
-        RspBean rspBean = ControllerChecker.check(request, bindingResult);
+        RspBean rspBean = AggregateChecker.check(request, bindingResult);
         if (rspBean.getRspCode() != null)
             return rspBean;
 
