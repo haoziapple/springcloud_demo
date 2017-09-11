@@ -19,18 +19,26 @@ import java.util.List;
  **/
 public class AggregateChecker {
     private static Logger logger = LoggerFactory.getLogger(AggregateChecker.class);
+    // 聚合请求数量限制
+    public static final int COUNT_LIMITS = 20;
 
     public static RspBean check(RequestBean<List<RouteBean>> requestBean, BindingResult bindingResult) {
         RspBean rspBean = ControllerChecker.check(requestBean, bindingResult);
         if (rspBean.getRspCode() != null)
             return rspBean;
+
+        if (requestBean.getData() != null && requestBean.getData().size() > COUNT_LIMITS) {
+            rspBean.setRspCode(HttpStatus.BAD_REQUEST.toString());
+            rspBean.setRspMsg("You aggregated " + requestBean.getData().size() + "requests, is over limit: " + COUNT_LIMITS);
+            return rspBean;
+        }
+
         for (RouteBean routeBean : requestBean.getData()) {
             // 考虑url开头不带/的情况
             if (routeBean.getUrl().startsWith(MappingValue.Aggregrate.ROOT + MappingValue.Aggregrate.BATCH_REQ)
                     || ("/" + routeBean.getUrl()).startsWith(MappingValue.Aggregrate.ROOT + MappingValue.Aggregrate.BATCH_REQ)) {
                 logger.error("aggregate request contains interable url, requestId: {}, illegal routeBean: {}", requestBean.getRequestId(), routeBean.toString());
                 // 设置返回bean
-                rspBean.setRequestId(requestBean.getRequestId());
                 rspBean.setRspCode(HttpStatus.BAD_REQUEST.toString());
                 rspBean.setRspMsg("aggregate request contains interable url: " + routeBean.toString());
                 return rspBean;

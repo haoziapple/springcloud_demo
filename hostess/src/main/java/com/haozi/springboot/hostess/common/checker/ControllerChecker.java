@@ -20,16 +20,16 @@ public class ControllerChecker {
     private static Logger logger = LoggerFactory.getLogger(ControllerChecker.class);
 
     public static RspBean check(RequestBean requestBean, BindingResult bindingResult) {
+        // 无论怎样，通不通过校验，都需要设置返回bean的requestId
+        RspBean rspBean = new RspBean<>();
+        rspBean.setRequestId(requestBean.getRequestId());
+
         if (bindingResult.hasErrors()) {
             logger.error("parameter error: {}", bindingResult.getFieldError().getDefaultMessage());
             // 设置返回bean
-            RspBean rspBean = new RspBean<>();
-            rspBean.setRequestId(requestBean.getRequestId());
             rspBean.setRspCode(HttpStatus.BAD_REQUEST.toString());
             rspBean.setRspMsg(bindingResult.getFieldError().getDefaultMessage());
-            return rspBean;
-        } else {
-            return new RspBean<>();
         }
+        return rspBean;
     }
 }

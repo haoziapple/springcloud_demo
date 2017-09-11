@@ -125,7 +125,6 @@ public class AggregateController implements EnvironmentAware {
         // 获取返回
         this.getAsyncRsp(futureList, rspList);
 
-        rspBean.setRequestId(request.getRequestId());
         rspBean.setRspCode(HttpStatus.OK.toString());
         rspBean.setRspMsg(HttpStatus.OK.getReasonPhrase());
         rspBean.setData(rspList);
