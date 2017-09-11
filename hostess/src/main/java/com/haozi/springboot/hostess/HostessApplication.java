@@ -57,12 +57,12 @@ public class HostessApplication {
     }
 
     @Bean
-    public ErrorFilter errorFilter(){
-        return  new ErrorFilter();
+    public ErrorFilter errorFilter() {
+        return new ErrorFilter();
     }
 
     @Bean
-    public LogFilter logFilter(){
+    public LogFilter logFilter() {
         return new LogFilter();
     }
 
