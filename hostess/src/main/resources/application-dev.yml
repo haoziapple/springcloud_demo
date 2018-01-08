@@ -1,3 +1,24 @@
 server:
-  port: 6666
+  port: 5555
   address: 10.108.26.61
+zuul:
+  routes:
+    api-a:
+      path: /a/**
+      serviceId: api-a
+      url: http://10.108.26.232:8086/oa-struct-service
+    api-b:
+      path: /b/**
+      serviceId: api-b
+      url: http://www.baidu.com
+    echome:
+      path: /ec/**
+      serviceId: echome
+  add-proxy-headers: true
+# 正确的处理HTTP请求头信息中的Host--参考PreDecorationFilter
+# 设置为true时，url不会跳转，默认false时，url会自动跳转
+  add-host-header: false
+echome:
+  ribbon:
+    listOfServers: http://www.jd.com,http://www.taobao.com,http://www.tmall.com
+

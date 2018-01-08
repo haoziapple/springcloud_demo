@@ -1,5 +1,6 @@
 package com.haozi.springboot.hostess.filter;
 
+import com.haozi.springboot.hostess.filter.constants.FilterOrderMap;
 import com.haozi.springboot.hostess.filter.constants.FilterType;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
@@ -24,7 +25,7 @@ public class ErrorFilter extends ZuulFilter {
 
     @Override
     public int filterOrder() {
-        return 10;
+        return FilterOrderMap.getFilterOrder(this.getClass().getName());
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.haozi.springboot.hostess.common;
 
+import org.hibernate.validator.constraints.NotBlank;
+
 import java.util.Map;
 
 /**
@@ -7,12 +9,15 @@ import java.util.Map;
  * @description: 路由信息bean
  * @author: wanghao/haozixiaowang@163.com
  * @date: 2017/9/5 16:11
-**/
+ **/
 public class RouteBean {
+    @NotBlank(message = "requestId cannot be blank")
     private String requestId;
 
-    private String reqMethod;
+    @NotBlank(message = "requestMethod cannot be blank(GET or POST)")
+    private String requestMethod;
 
+    @NotBlank(message = "url cannot be blank")
     private String url;
 
     private Map<String, String> headerMap;
@@ -51,19 +56,19 @@ public class RouteBean {
         this.body = body;
     }
 
-    public String getReqMethod() {
-        return reqMethod;
+    public String getRequestMethod() {
+        return requestMethod;
     }
 
-    public void setReqMethod(String reqMethod) {
-        this.reqMethod = reqMethod;
+    public void setRequestMethod(String requestMethod) {
+        this.requestMethod = requestMethod;
     }
 
     @Override
     public String toString() {
         return "RouteBean{" +
                 "requestId='" + requestId + '\'' +
-                ", reqMethod='" + reqMethod + '\'' +
+                ", requestMethod='" + requestMethod + '\'' +
                 ", url='" + url + '\'' +
                 ", headerMap=" + headerMap +
                 ", body='" + body + '\'' +
