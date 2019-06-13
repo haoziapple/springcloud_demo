@@ -43,6 +43,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                 //回调地址 授权模式
                 .redirectUris("http://www.baidu.com")
                 .authorizedGrantTypes("authorization_code", "refresh_token")
+//                .autoApprove(true)
                 .scopes("all")
                 //有效期时间
                 .accessTokenValiditySeconds(accessTokenValiditySeconds)
